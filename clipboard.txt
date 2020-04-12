@@ -1,1 +1,1 @@
-Clipboard Data: inputRecordingClipboard Data: soundDeviceObjectClipboard Data: filePathClipboard Data: sreenshotInformation
+Clipboard Data: IPAddr

