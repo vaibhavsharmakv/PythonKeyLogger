@@ -47,5 +47,5 @@ Currently, there are no pull requests or issues.
  
  
  ## VIDEO TUTORIAL: https://youtu.be/398jjyb6qsQ
- 
+ ps: I am really bad at making videos as you can tell
 
