@@ -27,7 +27,7 @@ Currently, there are no pull requests or issues.
 ## Prerequisite 
  - Python 3.6.5
  - Homebrew
- - PIP - pythong package manager
+ - PIP - python package manager
  - Virtual Enviorments
  
  ## To install on a Mac : 
