@@ -46,6 +46,6 @@ Currently, there are no pull requests or issues.
  
  
  
- ## VIDEO TUTORIAL: 
+ ## VIDEO TUTORIAL: https://youtu.be/398jjyb6qsQ
  
 
